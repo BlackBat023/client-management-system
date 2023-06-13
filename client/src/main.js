@@ -37,7 +37,7 @@ export const store = createStore({
             state.cart.push(order);
         },
 
-        clearCart: (state) => {
+        CLEAR_CART: (state) => {
             state.cart = [];
         }
 
@@ -45,7 +45,9 @@ export const store = createStore({
     actions: {
         createUserList({commit}, userList) {
 
-            commit("addUserList", userList);
+            setTimeout(() => {
+                commit("addUserList", userList);
+            }, 10000);
         },
 
         createProductList({commit}, productList){
@@ -67,6 +69,10 @@ export const store = createStore({
         createCartList({commit}, cartList){
             commit("ADD_TO_CART", cartList);
         },
+
+        clearCart({commit}){
+            commit("CLEAR_CART");
+        }
     },
     getters: {
         users(state){

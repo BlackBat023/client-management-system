@@ -6,7 +6,7 @@
         <div class="client-details">
             <h3 class="details-item">Customer ID: {{ id }}</h3>
             <h3 class="details-item">Phone number: {{ user.phone }}</h3>
-            <h3 class="details-item">Order Number: {{ orderNo }}</h3>
+            <h3 class="details-item">Order Number: {{ orderNum }}</h3>
             <h3 class="details-item">Address: {{ user.address }}</h3>
         </div>
         <div class="order-view">
@@ -40,10 +40,9 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 import { ref } from 'vue';
 import APIController from '@/controllers/api';
-import { store } from '@/main';
 import OrderForm from '@/components/OrderForm.vue'
 
 export default {
@@ -87,7 +86,7 @@ export default {
         },
 
         orderNo: () => {
-            return Math.floor(Math.random() * 10000);
+            return Math.floor(Math.random() * 100000);
         },
 
         totalPrice(){
@@ -100,11 +99,28 @@ export default {
 
     },
     methods: {
+        ...mapMutations([
+            'CLEAR_CART',
+        ]),
+
         async sendOrder(){
-            const order = await APIController.CreateOrder(this.cart.name, this.cart.qty, this.cart.option, this.cart.price, this.orderNum, this.cart.fee, this.cart.date, this.id);
-            if(order){
-                store.dispatch('clearCart');
+            console.log(this.cart);
+            
+            for(let i = 0; i <= this.cart.length - 1; i++){
+                try {
+                    const order = await APIController.CreateOrder(this.cart[i].name, this.cart[i].qty, this.cart[i].option, this.cart[i].price, this.orderNum, this.cart[i].fee, this.cart[i].date, this.id);
+                    if(order){
+                        this.clearCart();
+                    }
+                } catch (error){
+                    console.log(error);
+                }
             }
+            
+        },
+
+        clearCart(){
+            this.CLEAR_CART();
         },
 
         getOrderNum(){
@@ -113,6 +129,7 @@ export default {
     },
     created(){
         this.orderNum = this.getOrderNum();
+        console.log(this.orderNum);
     }
 }
 </script>

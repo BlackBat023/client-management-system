@@ -17,21 +17,6 @@ export default {
         });
     },
 
-    FetchProducts: () => {
-        return fetch(API_BASE + "/products/all")
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                //console.log(data.response);
-                return data.response;
-            } else {
-                throw data.response.error;
-            }
-        })
-        .catch(err => {
-            alert(err);
-        });
-    },
     FetchUser: (id) => {
         if(id != null) {
             return fetch(API_BASE + "/users/" + id)
@@ -123,6 +108,21 @@ export default {
     },
 
     // api calls for Inventory section
+    FetchProducts: () => {
+        return fetch(API_BASE + "/products/all")
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                //console.log(data.response);
+                return data.response;
+            } else {
+                throw data.response.error;
+            }
+        })
+        .catch(err => {
+            alert(err);
+        });
+    },
 
     FetchProduct: (id) => {
         if(id != null) {
@@ -179,10 +179,11 @@ export default {
             quantity == "" ||
             id == ""
         ) {
+            console.log(name, price, description, quantity, id);
             return false;
         }
 
-        return fetch(API_BASE + "/products/update" + id, {
+        return fetch(API_BASE + "/products/update/" + id, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"

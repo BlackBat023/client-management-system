@@ -38,8 +38,9 @@ export default {
 
     const fetchUsers = async () => {
       userList.value = await APIController.FetchUsers();
-      
-      store.dispatch("createUserList", userList.value);
+      if(userList.value){
+        store.dispatch("createUserList", userList.value);
+      }
       
     }
 

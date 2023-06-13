@@ -30,7 +30,7 @@
                     </div>
                 </template>
             </div>
-            <div class="table-row no-orders" v-else-if="!orderData">No Deliveries Scheduled</div>
+            <div class="table-row no-orders" v-else>No Deliveries Scheduled</div>
         </div>
     </div>
 </template>
@@ -56,17 +56,21 @@ export default {
         ]),
 
         orderData() {
-            const updateOrders = this.orders.filter(order => order.date == this.date).map(order => {
-                const filteredUsers = this.users.find(user => {
-                    let data = user.id == order.userId;
-                    return data;
-                });
-                
-                return { ...order, name: filteredUsers.name, phone: filteredUsers.phone, address: filteredUsers.address };
-                
+            const updateOrders = this.orders.filter(order => order.date === this.date).map(order => {
+                const filteredUser = this.users.find(user => user.id === order.userId);
+
+                if (filteredUser) {
+                    return {
+                        ...order,
+                        name: filteredUser.name,
+                        phone: filteredUser.phone,
+                        address: filteredUser.address
+                    };
+                }
+                return order;
             });
-            console.log(this.orders);
             return updateOrders;
+
         },
     },
 }

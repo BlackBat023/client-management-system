@@ -41,7 +41,7 @@
 
 <script>
 import APIController from '@/controllers/api'
-import { ref } from 'vue'
+// import { ref } from 'vue'
 import { mapState } from 'vuex'
 
 
@@ -49,10 +49,10 @@ export default {
     props: ["fetchUsers", "toggleForm"],
     data(){
         return {
+            searchQuery: '',
         }
     },
     setup (props) {
-        const searchQuery = ref("");
 
 
         const deleteUser = async id => {
@@ -64,7 +64,6 @@ export default {
 
         return {
             deleteUser,
-            searchQuery,
         }
     },
     computed: {
@@ -73,10 +72,13 @@ export default {
         ]),
 
         filterSearch () {
-            return this.users.user.filter((item) => {
-               if(this.users.user){ return item.name.toLowerCase().match(this.searchQuery.toLowerCase()); }
-            });
-            
+            if(this.searchQuery && this.searchQuery.length > 0){
+                return this.users.user.filter((item) => {
+                    return item.name.toLowerCase().match(this.searchQuery.toLowerCase());
+                });
+            } else {
+                return this.users.user;
+            }
         }
     },
     mounted(){
