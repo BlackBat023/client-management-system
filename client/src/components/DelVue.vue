@@ -15,8 +15,8 @@
                 <div class="table-col option">Price</div>
                 <div class="table-col option">Delivery</div>
             </div>
-            <div v-if="orderData">
-                <template v-for="order in orderData" :key="order.id">
+            <div v-if="orderData.length > 0">
+                <div v-for="order in orderData" :key="order.id">
                     <div class="table-row">
                         <div class="table-col name">{{ order.date }}</div>
                         <div class="table-col name">{{ order.name }}</div>
@@ -28,7 +28,7 @@
                         <div class="table-col option">{{ order.price }}</div>
                         <div class="table-col option">{{ order.fee }}</div>
                     </div>
-                </template>
+                </div>
             </div>
             <div class="table-row no-orders" v-else>No Deliveries Scheduled</div>
         </div>
@@ -56,21 +56,31 @@ export default {
         ]),
 
         orderData() {
-            const updateOrders = this.orders.filter(order => order.date === this.date).map(order => {
-                const filteredUser = this.users.find(user => user.id === order.userId);
+            const updateOrders = this.orders
+                .filter(order => order.date === this.date)
+                .map(order => {
+                    console.log('Order ID:', order.id);
+                    console.log('Order userID:', order.userId);
+                    console.log('Users Array:', this.users);
 
-                if (filteredUser) {
-                    return {
+                    let filteredUser = null;
+                    if (Array.isArray(this.users)) {
+                        filteredUser = this.users.match(user => user.id === order.userId);
+                    }
+                
+                    if (filteredUser) {
+                        const updatedOrder = {
                         ...order,
                         name: filteredUser.name,
                         phone: filteredUser.phone,
                         address: filteredUser.address
-                    };
-                }
-                return order;
-            });
+                        };
+                        return updatedOrder;
+                    }
+                    
+                });
+            console.log(updateOrders);
             return updateOrders;
-
         },
     },
 }

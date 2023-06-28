@@ -14,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id();
+            $table->id()->unique();
             $table->string("product");
             $table->string("qty");
             $table->string("option");
-            $table->string("orderNo")->unique();
+            $table->string("orderNo");
             $table->string("userId");
             $table->string("price");
             $table->string("fee");

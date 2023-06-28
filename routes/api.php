@@ -230,12 +230,101 @@ Route::get('/products/{id}', function(Request $request, $id) {
 
 // --Orders API section--
 
+Route::post('/orders/create', function(Request $request){
+    $data = $request->all();
+
+    if(!Orders::where('id', '=', $data['orderNo'])->exists()){
+        $order = Orders::create([
+            "product" => $data["product"],
+            "qty" => $data["qty"],
+            "option" => $data["option"],
+            "orderNo" => $data["orderNo"],
+            "userId" => $data["userId"],
+            "price" => $data["price"],
+            "fee" => $data["fee"],
+            "date" => $data["date"],
+        ]);
+
+        if(empty($order->id)){
+            return [
+                "success" => false,
+                "response" => [
+                    "error" => "An unusual error has occured"
+                ]
+            ];
+        } else {
+            return [
+                "success" => true,
+                "response" => [
+                    "order" => $order
+                ]
+            ];
+        }
+    } else {
+        return [
+            "success" => false,
+            "response" => [
+                "error" => "The Order item already exists"
+            ]
+        ];
+    }
+});
+
 Route::get('/orders/all', function(){
     $orders = DB::table('orders')->get();
 
     return response()->json([
         'orders' => $orders
     ]);
+});
+
+Route::get('/orders/{id}', function(Request $request, $id){
+    $order = Orders::find($id);
+
+    if(empty($order)){
+        return [
+            "success" => flase,
+            "response" => [
+                "error" => "Order record not found"
+            ]
+        ];
+    }
+
+    return [
+        "success" => true,
+        "response" => [
+            "order" => $order
+        ]
+    ];
+
+});
+
+Route::put('/orders/update/{id}', function(Request $request, $id){
+    $data = $request->all();
+
+    $order = Orders::find($id);
+
+    foreach($data as $key => $value) {
+        $order->{$key} = $value;
+    }
+
+    $result = $order->save();
+
+    return["success" => $result, "response" => ["order" => $order]];
+});
+
+Route::delete('/products/delete/{id}', function(Request $request, $id) {
+    $order = Orders::find($id);
+
+    if(empty($order)) {
+        $success = false;
+        $response = ["error" => "No such user."];
+    } else {
+        $success = $order->delete();
+        $response = ["message" => "User deleted."];
+    }
+
+    return ["success" => $success, "response" => $order];
 });
 
 
